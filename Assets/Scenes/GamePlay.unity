@@ -525,7 +525,7 @@ GameObject:
   - component: {fileID: 715913976}
   - component: {fileID: 715913975}
   - component: {fileID: 715913974}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -642,8 +642,8 @@ Transform:
   m_GameObject: {fileID: 715913973}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 4.0669265, y: -5.7617908, z: -8.339324}
-  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalPosition: {x: 16.7911, y: -5.7617908, z: -8.339324}
+  m_LocalScale: {x: 100, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2120147692}
@@ -660,6 +660,8 @@ GameObject:
   - component: {fileID: 731976205}
   - component: {fileID: 731976208}
   - component: {fileID: 731976207}
+  - component: {fileID: 731976210}
+  - component: {fileID: 731976209}
   m_Layer: 0
   m_Name: Dinor
   m_TagString: Untagged
@@ -734,7 +736,8 @@ Transform:
   m_LocalPosition: {x: -3.64, y: -3.19, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 1864021827}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!50 &731976207
@@ -810,6 +813,52 @@ BoxCollider2D:
   m_AutoTiling: 0
   m_Size: {x: 1.1987667, y: 1.5048348}
   m_EdgeRadius: 0
+--- !u!114 &731976209
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731976204}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1be2c26cdae0c5e45a5f2830863d5b50, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  animator: {fileID: 731976210}
+  rb: {fileID: 731976207}
+  autoRun: 1
+  runSpeed: 6
+  jumpForce: 5
+  groundCheck: {fileID: 1864021827}
+  groundCheckRadius: 0.23
+  groundLayer:
+    serializedVersion: 2
+    m_Bits: 8
+  holdToCrouch: 1
+  pressAnyKeyToStart: 1
+--- !u!95 &731976210
+Animator:
+  serializedVersion: 7
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 731976204}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: d5063a9ffb1b96b408c0570ff8d85323, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_AnimatePhysics: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorStateOnDisable: 0
+  m_WriteDefaultValuesOnDisable: 0
 --- !u!1 &1002589038
 GameObject:
   m_ObjectHideFlags: 0
@@ -821,7 +870,7 @@ GameObject:
   - component: {fileID: 1002589040}
   - component: {fileID: 1002589039}
   - component: {fileID: 1002589041}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1330,6 +1379,37 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!1 &1864021826
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1864021827}
+  m_Layer: 0
+  m_Name: groundCheck
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1864021827
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1864021826}
+  serializedVersion: 2
+  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
+  m_LocalPosition: {x: -0.069, y: -0.754, z: -0.60546315}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 731976206}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1916325425
 GameObject:
   m_ObjectHideFlags: 0
@@ -1513,7 +1593,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2120147692}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: Ground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
