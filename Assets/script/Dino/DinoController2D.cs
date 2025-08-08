@@ -16,14 +16,10 @@ public class DinoController2D : MonoBehaviour
     [SerializeField] private float groundCheckRadius = 0.15f;
     [SerializeField] private LayerMask groundLayer;
 
-    [Header("Crouch (bite)")]
-    [SerializeField] private bool holdToCrouch = true;
-
     [Header("Game Flow")]
     [SerializeField] private bool pressAnyKeyToStart = true;
 
     private bool isGrounded;
-    private bool isCrouching;
     private bool started;
 
     void Reset()
@@ -34,55 +30,38 @@ public class DinoController2D : MonoBehaviour
 
     void Update()
     {
-        // 1) Start game
-        if (!started && (!pressAnyKeyToStart || Input.anyKeyDown))
-        {
-            started = true;
-        }
+        // Start
+        if (!started && (!pressAnyKeyToStart || Input.anyKeyDown)) started = true;
 
-        // 2) Ground check
+        // Ground check
         isGrounded = Physics2D.OverlapCircle(groundCheck.position, groundCheckRadius, groundLayer);
 
-        // 3) Input
+        // Input jump (Space / Left mouse / Up)
         bool jumpPressed = Input.GetKeyDown(KeyCode.Space)
-                        || Input.GetMouseButtonDown(0) // Chuột trái
+                        || Input.GetMouseButtonDown(0)
                         || Input.GetKeyDown(KeyCode.UpArrow);
 
-        bool crouchPressed = Input.GetMouseButtonDown(1); // Chuột phải nhấn 1 lần
-        bool crouchHeld = Input.GetMouseButton(1);     // Chuột phải giữ
-
-        // 4) Crouch / Bite logic
-        if (holdToCrouch)
-            isCrouching = crouchHeld && isGrounded;
-        else
-        {
-            if (crouchPressed && isGrounded) isCrouching = !isCrouching;
-        }
-
-        // 5) Jump
-        if (started && !isCrouching && isGrounded && jumpPressed)
+        // Jump
+        if (started && isGrounded && jumpPressed)
         {
             rb.linearVelocity = new Vector2(rb.linearVelocity.x, 0f);
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
 
-        // 6) Horizontal move (endless runner)
-        float targetXVel = 0f;
-        if (started && autoRun)
-            targetXVel = isCrouching ? runSpeed * 0.85f : runSpeed;
-
+        // Endless run (giữ chạy kể cả trên không)
+        float targetXVel = (started && autoRun) ? runSpeed : 0f;
         rb.linearVelocity = new Vector2(Mathf.Lerp(rb.linearVelocity.x, targetXVel, 0.25f), rb.linearVelocity.y);
 
-        // 7) Animator params
-        animator.SetBool("idle", !started);
-        animator.SetBool("move", started && isGrounded && !isCrouching && Mathf.Abs(rb.linearVelocity.x) > 0.1f);
-        animator.SetBool("jump", !isGrounded);
-        animator.SetBool("bite", isCrouching);
+        // Animator: luôn Move khi đã start
+        animator.SetBool("move", started && Mathf.Abs(rb.linearVelocity.x) > 0.05f);
+
+        // (Optional) điều chỉnh tốc độ animation khi trên không cho đẹp
+        animator.speed = (isGrounded ? 1f : 1.0f); // tăng lên 1.1–1.2 nếu muốn chân quay nhanh hơn khi nhảy
     }
 
     void OnDrawGizmosSelected()
     {
-        if (groundCheck == null) return;
+        if (!groundCheck) return;
         Gizmos.color = Color.green;
         Gizmos.DrawWireSphere(groundCheck.position, groundCheckRadius);
     }

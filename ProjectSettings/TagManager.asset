@@ -11,7 +11,7 @@ TagManager:
   - groundLayer
   - Water
   - UI
-  - 
+  - ParallaxLayer
   - 
   - 
   - 
@@ -40,6 +40,36 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Sky
+    uniqueID: 3802568125
+    locked: 0
+  - name: Clouds
+    uniqueID: 2567366143
+    locked: 0
+  - name: Mountain_Back
+    uniqueID: 2507651659
+    locked: 0
+  - name: Mountain_Middle
+    uniqueID: 2499904439
+    locked: 0
+  - name: Mountain_Front
+    uniqueID: 2131856025
+    locked: 0
+  - name: Fuji
+    uniqueID: 4058170913
+    locked: 0
+  - name: BackgroundTree
+    uniqueID: 502042125
+    locked: 0
+  - name: Trees
+    uniqueID: 3913979655
+    locked: 0
+  - name: Ground
+    uniqueID: 1118412617
+    locked: 0
+  - name: Dino
+    uniqueID: 3936901277
     locked: 0
   m_RenderingLayers:
   - Default
