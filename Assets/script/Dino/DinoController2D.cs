@@ -8,7 +8,9 @@ public class DinoController2D : MonoBehaviour
 
     [Header("Move")]
     [SerializeField] private bool autoRun = true;
-    [SerializeField] private float runSpeed = 6f;
+    [SerializeField] private float runSpeed = 6f;     // tốc độ khởi đầu
+    [SerializeField] private float maxRunSpeed = 20f; // trần tốc độ
+    [SerializeField] private float acceleration = 2f; // đơn vị: units/second
 
     [Header("Jump")]
     [SerializeField] private float jumpForce = 12f;
@@ -21,11 +23,17 @@ public class DinoController2D : MonoBehaviour
 
     private bool isGrounded;
     private bool started;
+    private float currentSpeed; // tốc độ đang chạy (tăng dần tới max)
 
     void Reset()
     {
         animator = GetComponent<Animator>();
         rb = GetComponent<Rigidbody2D>();
+    }
+
+    void Start()
+    {
+        currentSpeed = runSpeed;
     }
 
     void Update()
@@ -48,15 +56,23 @@ public class DinoController2D : MonoBehaviour
             rb.AddForce(Vector2.up * jumpForce, ForceMode2D.Impulse);
         }
 
-        // Endless run (giữ chạy kể cả trên không)
-        float targetXVel = (started && autoRun) ? runSpeed : 0f;
+        // Tăng tốc theo thời gian nhưng không vượt maxRunSpeed
+        if (started && autoRun)
+        {
+            currentSpeed = Mathf.Min(currentSpeed + acceleration * Time.deltaTime, maxRunSpeed);
+        }
+        else
+        {
+            currentSpeed = 0f;
+        }
+
+        // Đẩy rigidbody tới tốc độ mục tiêu (giữ mượt)
+        float targetXVel = currentSpeed;
         rb.linearVelocity = new Vector2(Mathf.Lerp(rb.linearVelocity.x, targetXVel, 0.25f), rb.linearVelocity.y);
 
-        // Animator: luôn Move khi đã start
+        // Animator
         animator.SetBool("move", started && Mathf.Abs(rb.linearVelocity.x) > 0.05f);
-
-        // (Optional) điều chỉnh tốc độ animation khi trên không cho đẹp
-        animator.speed = (isGrounded ? 1f : 1.0f); // tăng lên 1.1–1.2 nếu muốn chân quay nhanh hơn khi nhảy
+        animator.speed = 1f; // chỉnh nếu muốn nhanh/chậm hơn
     }
 
     void OnDrawGizmosSelected()
