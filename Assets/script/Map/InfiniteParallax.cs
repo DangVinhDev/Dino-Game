@@ -98,8 +98,8 @@ public class BGAlternatingSpawner : MonoBehaviour
 
     int PrefabIdx()
     {
-        int i = nextPrefabIndex;
-        nextPrefabIndex = (nextPrefabIndex + 1) % bgPrefabs.Length; // BG→BG2→BG→...
-        return i;
+        // Trả về index ngẫu nhiên
+        return Random.Range(0, bgPrefabs.Length);
     }
+
 }

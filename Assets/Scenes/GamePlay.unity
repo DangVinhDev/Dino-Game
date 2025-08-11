@@ -1123,8 +1123,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 261203532}
   bgPrefabs:
-  - {fileID: 9183424836001154004, guid: fa7e902cafa2bfe4ebdf182c7e20faf0, type: 3}
   - {fileID: 7219416967069063341, guid: 04d1b3d328f727c47a3ce311694da377, type: 3}
+  - {fileID: 9183424836001154004, guid: c54bb0481c439d642aa17420b2c13bc5, type: 3}
+  - {fileID: 9183424836001154004, guid: 7ec51f25b8354ae42a45eb6748c0e10b, type: 3}
+  - {fileID: 9183424836001154004, guid: 8304d13ea79f1c84eb54d3f644b59260, type: 3}
+  - {fileID: 9183424836001154004, guid: 7ee462ac38586d4429649801652bf11a, type: 3}
+  - {fileID: 7219416967069063341, guid: fca8f1da6f160e94cb67de927bcf22fc, type: 3}
+  - {fileID: 7219416967069063341, guid: d58dda1e8b5f5ed439288b514edb278c, type: 3}
+  - {fileID: 7219416967069063341, guid: 1d928157afc57d34696a3e0a3985366c, type: 3}
   triggerPercent: 0.01
   maxActive: 3
   overlap: 1
