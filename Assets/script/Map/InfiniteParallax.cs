@@ -1,79 +1,105 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using UnityEngine;
 
-public class InfiniteScroller2Segments : MonoBehaviour
+public class BGAlternatingSpawner : MonoBehaviour
 {
     [Header("Refs")]
-    public Transform cam;          // Main Camera (transform)
-    public Transform segmentA;     // Prefab/segment 1 (đã đặt trong scene)
-    public Transform segmentB;     // Prefab/segment 2 (đã đặt liền kề)
+    public Transform cam;
 
-    [Header("Length & Trigger")]
-    [Tooltip("Để 0 = tự tính theo bounds sprite trong segmentA")]
-    public float segmentLength = 0f;   // chiều dài 1 segment (world units)
-    [Tooltip("Dịch sớm/ trễ bao nhiêu đơn vị trước khi chạm mép")]
-    public float lead = 2f;
+    [Header("Prefabs (luân phiên)")]
+    public GameObject[] bgPrefabs;   // BG, BG2, ...
 
-    private Transform leftSeg, rightSeg;
+    [Header("Spawn rules")]
+    [Range(0f, 1f)] public float triggerPercent = 0.1f; // mày muốn 0.1
+    public int maxActive = 3;
 
-    void Awake()
+    [Header("Seam fix")]
+    [Tooltip("Chồng mép theo world units. PPU=100 → 0.01")]
+    public float overlap = 0.01f;
+
+    // runtime
+    class Segment { public Transform tf; public float startX; public float length; }
+    readonly List<Segment> active = new List<Segment>();
+    int nextPrefabIndex;
+
+    void Start()
     {
-        if (!cam || !segmentA || !segmentB)
-        {
-            Debug.LogError("[InfiniteScroller2Segments] Thiếu cam/segmentA/segmentB");
-            enabled = false; return;
-        }
+        if (!cam || bgPrefabs == null || bgPrefabs.Length == 0)
+        { Debug.LogError("Missing cam/bgPrefabs"); enabled = false; return; }
 
-        // Tự tính chiều dài nếu chưa set
-        if (segmentLength <= 0f)
-            segmentLength = ComputeSegmentLength(segmentA);
-
-        // Xác định trái/phải ban đầu
-        if (segmentA.position.x <= segmentB.position.x)
-        {
-            leftSeg = segmentA; rightSeg = segmentB;
-        }
-        else
-        {
-            leftSeg = segmentB; rightSeg = segmentA;
-        }
+        // Spawn tấm đầu tại X=0 theo mép trái thực tế
+        var seg0 = SpawnByLeftEdge(bgPrefabs[PrefabIdx()], 0f);
+        // Tấm thứ 2 đặt sát NGAY mép phải của tấm đầu (dựa vào bounds thực)
+        var seg1 = SpawnRightOf(seg0);
+        active.Add(seg0); active.Add(seg1);
     }
 
     void LateUpdate()
     {
-        float camX = cam.position.x;
+        if (active.Count == 0) return;
 
-        // Đi sang phải: nếu camera sắp qua nửa phải của segmentRight -> đẩy segmentLeft lên tiếp theo
-        if (camX > rightSeg.position.x - (segmentLength * 0.5f) - lead)
+        var right = active[active.Count - 1];
+
+        // dùng chiều dài của *tấm phải* để tính ngưỡng trigger
+        float triggerX = right.startX + right.length * triggerPercent;
+        if (cam.position.x >= triggerX)
         {
-            MoveLeftAhead();
+            var newSeg = SpawnRightOf(right);
+            active.Add(newSeg);
+
+            if (active.Count > maxActive)
+            {
+                var left = active[0];
+                active.RemoveAt(0);
+                Destroy(left.tf.gameObject);
+            }
         }
-        // Đi sang trái: nếu camera sắp qua nửa trái của segmentLeft -> kéo segmentRight về phía sau
-        else if (camX < leftSeg.position.x + (segmentLength * 0.5f) + lead)
+    }
+
+    // ==== Helpers ====
+
+    Segment SpawnRightOf(Segment prev)
+    {
+        // đo mép phải (thế giới) của tấm trước
+        Bounds prevB = GetWorldBounds(prev.tf);
+        float desiredLeft = prevB.max.x - overlap;   // dán sát, chồng nhẹ overlap
+        return SpawnByLeftEdge(bgPrefabs[PrefabIdx()], desiredLeft);
+    }
+
+    Segment SpawnByLeftEdge(GameObject prefab, float desiredLeft)
+    {
+        var go = Instantiate(prefab, Vector3.zero, Quaternion.identity);
+        // đo bounds sau khi instantiate
+        Bounds b = GetWorldBounds(go.transform);
+
+        // dời cả prefab để mép trái (b.min.x) trùng desiredLeft
+        float shift = desiredLeft - b.min.x;
+        go.transform.position += new Vector3(shift, 0f, 0f);
+
+        // đo lại bounds (an toàn) rồi trả về thông tin
+        b = GetWorldBounds(go.transform);
+
+        return new Segment
         {
-            MoveRightBehind();
-        }
+            tf = go.transform,
+            startX = b.min.x,          // lưu mép trái thực tế
+            length = b.size.x
+        };
     }
 
-    void MoveLeftAhead()
+    Bounds GetWorldBounds(Transform root)
     {
-        leftSeg.position = rightSeg.position + Vector3.right * segmentLength;
-        // hoán đổi tham chiếu
-        var tmp = leftSeg; leftSeg = rightSeg; rightSeg = tmp;
-    }
-
-    void MoveRightBehind()
-    {
-        rightSeg.position = leftSeg.position - Vector3.right * segmentLength;
-        // hoán đổi tham chiếu
-        var tmp = leftSeg; leftSeg = rightSeg; rightSeg = tmp;
-    }
-
-    float ComputeSegmentLength(Transform segRoot)
-    {
-        var srs = segRoot.GetComponentsInChildren<SpriteRenderer>(true);
-        if (srs.Length == 0) return 0f;
+        var srs = root.GetComponentsInChildren<SpriteRenderer>(true);
+        if (srs.Length == 0) return new Bounds(root.position, Vector3.zero);
         Bounds b = srs[0].bounds;
         for (int i = 1; i < srs.Length; i++) b.Encapsulate(srs[i].bounds);
-        return b.size.x;
+        return b;
+    }
+
+    int PrefabIdx()
+    {
+        int i = nextPrefabIndex;
+        nextPrefabIndex = (nextPrefabIndex + 1) % bgPrefabs.Length; // BG→BG2→BG→...
+        return i;
     }
 }
