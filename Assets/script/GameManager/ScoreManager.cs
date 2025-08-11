@@ -3,41 +3,33 @@ using TMPro;
 
 public class ScoreManager : MonoBehaviour
 {
-    [Header("Refs")]
     public TextMeshProUGUI scoreText;
-    public TextMeshProUGUI bestText;
-
-    [Header("Scoring")]
-    public float pointsPerSecond = 1f;  // 1s = 1 điểm
-    public int score;
-
-    int best;
-
-    void Start()
-    {
-        best = PlayerPrefs.GetInt("Best", 0);
-        if (bestText) bestText.text = $"Điểm cao nhất {best:00}";
-    }
+    public int score = 0;       // Chỉ lưu số nguyên
+    private float timer = 0f;
+    private int pointRate = 1;  // Điểm/giây ban đầu
 
     void Update()
     {
-        score += Mathf.FloorToInt(pointsPerSecond * Time.deltaTime);
-        if (scoreText) scoreText.text = $"Điểm {score:00}";
-    }
+        // Cập nhật tốc độ cộng điểm theo thời gian chơi
+        float t = Time.timeSinceLevelLoad;
 
-    public void CommitBest()
-    {
-        if (score > best)
+        if (t >= 30f) pointRate = 5;
+        else if (t >= 20f) pointRate = 3;
+        else if (t >= 10f) pointRate = 2;
+        else pointRate = 1;
+
+        // Đếm thời gian để cộng điểm nguyên
+        timer += Time.deltaTime;
+        if (timer >= 1f)
         {
-            best = score;
-            PlayerPrefs.SetInt("Best", best);
-            if (bestText) bestText.text = $"Điểm cao nhất {best:00}";
+            score += pointRate;
+            timer -= 1f; // reset lại 1 giây
         }
-    }
 
-    public void ResetRun()
-    {
-        score = 0;
-        if (scoreText) scoreText.text = "00";
+        // Hiển thị điểm
+        if (scoreText != null)
+        {
+            scoreText.text = "Điểm: " + score;
+        }
     }
 }

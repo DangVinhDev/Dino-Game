@@ -1260,12 +1260,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5189ce42b0e133c4493ce6397913b4a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  dino: {fileID: 731976209}
   scoreText: {fileID: 966549806}
-  bestText: {fileID: 2087931262}
-  minRate: 1
-  maxRate: 3
-  maxSpeed: 20
   score: 0
 --- !u!1 &2040718620
 GameObject:
