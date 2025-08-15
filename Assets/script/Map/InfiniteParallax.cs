@@ -7,10 +7,10 @@ public class BGAlternatingSpawner : MonoBehaviour
     public Transform cam;
 
     [Header("Prefabs (luân phiên)")]
-    public GameObject[] bgPrefabs;   // BG, BG2, ...
+    public GameObject[] bgPrefabs;   // BG, BG2, BG3
 
     [Header("Spawn rules")]
-    [Range(0f, 1f)] public float triggerPercent = 0.1f; // mày muốn 0.1
+    [Range(0f, 1f)] public float triggerPercent = 0.1f; // thích đặt 0.1 thì đặt thôi
     public int maxActive = 3;
 
     [Header("Seam fix")]
@@ -27,9 +27,9 @@ public class BGAlternatingSpawner : MonoBehaviour
         if (!cam || bgPrefabs == null || bgPrefabs.Length == 0)
         { Debug.LogError("Missing cam/bgPrefabs"); enabled = false; return; }
 
-        // Spawn tấm đầu tại X=0 theo mép trái thực tế
+        // Spawn tấm đầu tại X=0 theo mép trái
         var seg0 = SpawnByLeftEdge(bgPrefabs[PrefabIdx()], 0f);
-        // Tấm thứ 2 đặt sát NGAY mép phải của tấm đầu (dựa vào bounds thực)
+        // Tấm thứ 2 đặt sát NGAY mép phải của tấm đầu
         var seg1 = SpawnRightOf(seg0);
         active.Add(seg0); active.Add(seg1);
     }
@@ -40,7 +40,7 @@ public class BGAlternatingSpawner : MonoBehaviour
 
         var right = active[active.Count - 1];
 
-        // dùng chiều dài của *tấm phải* để tính ngưỡng trigger
+        // dùng chiều dài của tấm phải để tính ngưỡng trigger
         float triggerX = right.startX + right.length * triggerPercent;
         if (cam.position.x >= triggerX)
         {
@@ -60,9 +60,9 @@ public class BGAlternatingSpawner : MonoBehaviour
 
     Segment SpawnRightOf(Segment prev)
     {
-        // đo mép phải (thế giới) của tấm trước
+        // đo mép phải của tấm trước
         Bounds prevB = GetWorldBounds(prev.tf);
-        float desiredLeft = prevB.max.x - overlap;   // dán sát, chồng nhẹ overlap
+        float desiredLeft = prevB.max.x - overlap;   // dán sát chồng nhẹ overlap
         return SpawnByLeftEdge(bgPrefabs[PrefabIdx()], desiredLeft);
     }
 
@@ -72,11 +72,11 @@ public class BGAlternatingSpawner : MonoBehaviour
         // đo bounds sau khi instantiate
         Bounds b = GetWorldBounds(go.transform);
 
-        // dời cả prefab để mép trái (b.min.x) trùng desiredLeft
+        // dời cả prefab để mép trái b.min.x trùng desiredLeft
         float shift = desiredLeft - b.min.x;
         go.transform.position += new Vector3(shift, 0f, 0f);
 
-        // đo lại bounds (an toàn) rồi trả về thông tin
+        // đo lại bounds an toàn rồi trả về thông tin
         b = GetWorldBounds(go.transform);
 
         return new Segment
@@ -98,7 +98,7 @@ public class BGAlternatingSpawner : MonoBehaviour
 
     int PrefabIdx()
     {
-        // Trả về index ngẫu nhiên
+        // Trả về Prefab map ngẫu nhiên
         return Random.Range(0, bgPrefabs.Length);
     }
 

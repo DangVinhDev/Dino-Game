@@ -15,7 +15,7 @@ public class DinoHealth : MonoBehaviour
         OnHealthChanged?.Invoke(currentHearts, maxHearts);
     }
 
-    // Gọi cái này khi dính quái/chướng ngại
+    // 
     public void TakeDamage(int amount = 1)
     {
         if (currentHearts <= 0) return;
@@ -24,9 +24,7 @@ public class DinoHealth : MonoBehaviour
 
         if (currentHearts == 0)
         {
-            // hết máu -> game over (nếu mày có GameStateManager)
-            // GameStateManager.I?.GameOver();
-            // Animator chết… tùy mày thêm sau
+            //hết máu gọi gameoverscene
         }
     }
 
@@ -43,10 +41,10 @@ public class DinoHealth : MonoBehaviour
         OnHealthChanged?.Invoke(currentHearts, maxHearts);
     }
 
-    // Ví dụ test nhanh bằng phím (xóa nếu không cần)
+
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.H)) TakeDamage(1);
-        if (Input.GetKeyDown(KeyCode.J)) Heal(1);
+        if (Input.GetKeyDown(KeyCode.K)) TakeDamage(1);
+        if (Input.GetKeyDown(KeyCode.L)) Heal(1);
     }
 }

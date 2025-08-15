@@ -17,10 +17,10 @@ public class GameStateManager : MonoBehaviour
 
     [Header("UI Panels")]
     [SerializeField] private GameObject menuScreen;     // kéo MenuScreen vào đây
-    [SerializeField] private GameObject gameOverScreen; // kéo GameOverScreen vào đây (nếu có)
+    [SerializeField] private GameObject gameOverScreen; // kéo GameOverScreen vào đây
 
     [Header("Main Menu (optional)")]
-    [SerializeField] private string mainMenuSceneName = ""; // để trống nếu không dùng load scene
+    [SerializeField] private string mainMenuSceneName = ""; // khi nào có loadscene thì thêm vào
 
     void Awake()
     {
@@ -41,7 +41,7 @@ public class GameStateManager : MonoBehaviour
             TogglePause();
     }
 
-    // ==== Public API ====
+    // ==== P API ====
     public void TogglePause()
     {
         if (State == GameState.Paused) Resume();
@@ -79,7 +79,7 @@ public class GameStateManager : MonoBehaviour
 
     public void GoToMainMenu()
     {
-        // Gán hàm này cho nút MainMenu
+        // Gán hàm này cho MainMenu
         if (!string.IsNullOrEmpty(mainMenuSceneName))
         {
             Time.timeScale = 1f;        // đảm bảo unpause trước khi load
@@ -88,7 +88,6 @@ public class GameStateManager : MonoBehaviour
         }
         else
         {
-            // Không dùng scene riêng: chỉ ẩn panel và resume
             Resume();
         }
     }
